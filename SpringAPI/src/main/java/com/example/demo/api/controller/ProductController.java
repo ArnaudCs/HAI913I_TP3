@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -30,6 +31,11 @@ public class ProductController {
         }
         return null;
     };
+    
+    @GetMapping("/all-product")
+    public List<Product> getAllProducts() {
+        return productService.getAllProducts();
+    }
 
     @PostMapping("/add-product")
     public ResponseEntity<String> addProduct(@RequestBody Product newProduct) {

@@ -17,8 +17,8 @@ public class UserService {
     public UserService(){
         userList = new ArrayList<>();
 
-        User user = new User(1, "Adam", 22, "adam.s@yahoo.fr", "boubli");
-        User user2 = new User(2, "Arnaud", 22, "arnaud.c@yahoo.fr", "boubla");
+        User user = new User("Adam", 22, "adam.s@yahoo.fr", "boubli");
+        User user2 = new User("Arnaud", 22, "arnaud.c@yahoo.fr", "boubla");
         userList.addAll(Arrays.asList(user, user2));
     }
     public Optional<User> getUser(Integer id) {
@@ -31,4 +31,8 @@ public class UserService {
         }
         return optional;
     };
+    
+    public List<User> getAllUsers() {
+    	return userList;
+    }
 }

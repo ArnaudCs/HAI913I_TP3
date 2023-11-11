@@ -2,21 +2,35 @@ package com.example.demo.api.model;
 
 import java.util.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 public class Product {
 
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
     private double price;
     private Date expirationDate;
 
-    public Product(int id, String name, double price, Date expirationDate) {
-        this.id = id;
+    public Product(String name, double price, Date expirationDate) {
         this.name = name;
         this.price = price;
         this.expirationDate = expirationDate;
     }
 
-    @Override
+    public Product() {
+    	this.id = 0;
+    	this.name = "null";
+        this.price = 0;
+        this.expirationDate = new Date();
+	}
+
+	@Override
     public String toString() {
         return "Product{" +
                 "id=" + id +

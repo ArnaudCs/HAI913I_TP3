@@ -3,6 +3,8 @@ package com.example.demo.service;
 import com.example.demo.api.exceptions.ProductAlreadyExistsException;
 import com.example.demo.api.exceptions.ProductNotFoundException;
 import com.example.demo.api.model.Product;
+import com.example.demo.api.model.User;
+
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -13,8 +15,8 @@ public class ProductService {
     public ProductService(){
         productList = new ArrayList<>();
 
-        Product product = new Product(1, "Pen", 2, new Date());
-        Product product2 = new Product(2, "Keyboard", 79.99, new Date());
+        Product product = new Product("Pen", 2, new Date());
+        Product product2 = new Product("Keyboard", 79.99, new Date());
         productList.addAll(Arrays.asList(product, product2));
     }
 
@@ -28,6 +30,10 @@ public class ProductService {
         } else {
             throw new ProductNotFoundException("Product not found with ID: " + id);
         }
+    }
+    
+    public List<Product> getAllProducts() {
+    	return productList;
     }
 
     public void addProduct(Product newProduct) throws ProductAlreadyExistsException {

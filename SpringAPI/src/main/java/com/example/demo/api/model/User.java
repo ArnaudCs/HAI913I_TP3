@@ -1,18 +1,34 @@
 package com.example.demo.api.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 public class User {
+	
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
     private int age;
     private String email;
     private String password;
 
-    public User(int id, String name, int age, String email, String password) {
-        this.id = id;
+    public User(String name, int age, String email, String password) {
         this.name = name;
         this.age = age;
         this.email = email;
         this.password = password;
+    }
+    
+    public User() {
+    	this.id = 0;
+        this.name = "null";
+        this.age = 0;
+        this.email = "null";
+        this.password = "null";
     }
 
     @Override
