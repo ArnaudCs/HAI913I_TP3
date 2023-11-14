@@ -20,7 +20,7 @@ public class UserController {
         this.userService = userService;
     }
     @GetMapping("/user")
-    public User getUser(@RequestParam Integer id){
+    public User getUser(@RequestParam String id){
         Optional user = userService.getUser(id);
         if(user.isPresent()){
             return (User) user.get();

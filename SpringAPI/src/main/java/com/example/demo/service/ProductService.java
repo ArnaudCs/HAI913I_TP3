@@ -20,7 +20,7 @@ public class ProductService {
         productList.addAll(Arrays.asList(product, product2));
     }
 
-    public Optional<Product> getProduct(Integer id) {
+    public Optional<Product> getProduct(String id) {
         Optional<Product> optionalProduct = productList.stream()
                 .filter(product -> product.getId() == id)
                 .findFirst();
@@ -47,7 +47,7 @@ public class ProductService {
         }
     }
 
-    public void deleteProduct(Integer id) {
+    public void deleteProduct(String id) {
         Optional<Product> productToRemove = productList.stream()
                 .filter(product -> product.getId() == id)
                 .findFirst();
@@ -65,7 +65,7 @@ public class ProductService {
         }
     }
 
-    public void updateProduct(Integer id, Product updatedProduct) {
+    public void updateProduct(String id, Product updatedProduct) {
         boolean found = false;
         for (int i = 0; i < productList.size(); i++) {
             Product product = productList.get(i);

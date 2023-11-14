@@ -21,7 +21,7 @@ public class UserService {
         User user2 = new User("Arnaud", 22, "arnaud.c@yahoo.fr", "boubla");
         userList.addAll(Arrays.asList(user, user2));
     }
-    public Optional<User> getUser(Integer id) {
+    public Optional<User> getUser(String id) {
         Optional optional = Optional.empty();
         for(User user: userList){
             if(id == user.getId()){

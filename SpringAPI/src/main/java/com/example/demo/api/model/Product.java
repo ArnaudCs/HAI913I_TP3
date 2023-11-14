@@ -1,18 +1,15 @@
 package com.example.demo.api.model;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
-@Entity
+@Document(collection = "products")
 public class Product {
 
-	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @Id
+    private String id;
     private String name;
     private double price;
     private Date expirationDate;
@@ -24,27 +21,25 @@ public class Product {
     }
 
     public Product() {
-    	this.id = 0;
-    	this.name = "null";
-        this.price = 0;
-        this.expirationDate = new Date();
-	}
+    }
 
-	@Override
+    // Getters and setters
+
+    @Override
     public String toString() {
         return "Product{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", price=" + price +
                 ", expirationDate=" + expirationDate +
                 '}';
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

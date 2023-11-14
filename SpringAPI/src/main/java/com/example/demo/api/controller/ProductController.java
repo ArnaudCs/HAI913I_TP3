@@ -24,7 +24,7 @@ public class ProductController {
         this.productService = productService;
     }
     @GetMapping("/product")
-    public Product getProduct(@RequestParam Integer id){
+    public Product getProduct(@RequestParam String id){
         Optional product = productService.getProduct(id);
         if(product.isPresent()){
             return (Product) product.get();
@@ -48,7 +48,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/delete-product/{id}")
-    public ResponseEntity<String> deleteProduct(@PathVariable Integer id) {
+    public ResponseEntity<String> deleteProduct(@PathVariable String id) {
         try {
             productService.deleteProduct(id);
             return new ResponseEntity<>("Product deleted successfully", HttpStatus.OK);
@@ -58,7 +58,7 @@ public class ProductController {
     }
 
     @PutMapping("/update-product/{id}")
-    public ResponseEntity<String> updateProduct(@PathVariable Integer id, @RequestBody Product updatedProduct) {
+    public ResponseEntity<String> updateProduct(@PathVariable String id, @RequestBody Product updatedProduct) {
         try {
             productService.updateProduct(id, updatedProduct);
             return new ResponseEntity<>("Product updated successfully", HttpStatus.OK);

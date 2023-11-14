@@ -1,16 +1,13 @@
 package com.example.demo.api.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
+@Document(collection = "users")
 public class User {
-	
-	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+
+    @Id
+    private String id;
     private String name;
     private int age;
     private String email;
@@ -22,19 +19,17 @@ public class User {
         this.email = email;
         this.password = password;
     }
-    
+
     public User() {
-    	this.id = 0;
-        this.name = "null";
-        this.age = 0;
-        this.email = "null";
-        this.password = "null";
     }
+
+    
+    // Getters and setters
 
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", age=" + age +
                 ", email='" + email + '\'' +
@@ -42,13 +37,14 @@ public class User {
                 '}';
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
+
 
     public String getName() {
         return name;
