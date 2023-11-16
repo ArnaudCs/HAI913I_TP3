@@ -1,19 +1,23 @@
 package com.example.demo.service;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.example.demo.api.exceptions.ProductAlreadyExistsException;
 import com.example.demo.api.exceptions.ProductNotFoundException;
 import com.example.demo.api.model.Product;
 import com.example.demo.api.repository.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
 
     @Autowired
     public ProductService(ProductRepository productRepository) {
@@ -21,6 +25,7 @@ public class ProductService {
     }
 
     public Optional<Product> getProduct(String id) {
+    	logger.info("User requested product with ID: {}", id);
         return productRepository.findById(id);
     }
 
@@ -34,6 +39,7 @@ public class ProductService {
         if (existingProduct.isPresent()) {
             throw new ProductAlreadyExistsException("Product already exists with ID: " + newProduct.getId());
         } else {
+        	logger.info("User added a new product: {}", newProduct);
             productRepository.save(newProduct);
         }
     }
@@ -44,6 +50,7 @@ public class ProductService {
         if (existingProduct.isPresent()) {
             productRepository.deleteById(id);
             System.out.println("Product with ID: " + id + " has been deleted");
+            logger.info("User delete a product with id: {}", id);
         } else {
             throw new ProductNotFoundException("Product not found with ID: " + id);
         }
@@ -53,9 +60,11 @@ public class ProductService {
         Optional<Product> existingProduct = productRepository.findById(id);
 
         if (existingProduct.isPresent()) {
+        	logger.info("User update a new product: {}", updatedProduct);
             productRepository.save(updatedProduct);
         } else {
             throw new ProductNotFoundException("Product not found with ID: " + id);
         }
     }
+    
 }
