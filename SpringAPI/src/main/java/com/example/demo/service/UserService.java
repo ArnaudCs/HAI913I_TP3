@@ -1,38 +1,35 @@
 package com.example.demo.service;
 
 import com.example.demo.api.model.User;
+import com.example.demo.api.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService {
 
-    private List<User> userList;
+    private final UserRepository userRepository;
 
-    public UserService(){
-        userList = new ArrayList<>();
-
-        User user = new User("Adam", 22, "adam.s@yahoo.fr", "boubli");
-        User user2 = new User("Arnaud", 22, "arnaud.c@yahoo.fr", "boubla");
-        userList.addAll(Arrays.asList(user, user2));
+    @Autowired
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
+
     public Optional<User> getUser(String id) {
-        Optional optional = Optional.empty();
-        for(User user: userList){
-            if(id == user.getId()){
-                optional = Optional.of(user);
-                return optional;
-            }
-        }
-        return optional;
-    };
-    
-    public List<User> getAllUsers() {
-    	return userList;
+        return userRepository.findById(id);
     }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public User addUser(User user) {
+        return userRepository.save(user);
+    }
+
+    // Add other methods as needed
+
 }

@@ -3,79 +3,58 @@ package com.example.demo.service;
 import com.example.demo.api.exceptions.ProductAlreadyExistsException;
 import com.example.demo.api.exceptions.ProductNotFoundException;
 import com.example.demo.api.model.Product;
-import com.example.demo.api.model.User;
-
+import com.example.demo.api.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService {
-    private List<Product> productList;
-    public ProductService(){
-        productList = new ArrayList<>();
 
-        Product product = new Product("Pen", 2, new Date());
-        Product product2 = new Product("Keyboard", 79.99, new Date());
-        productList.addAll(Arrays.asList(product, product2));
+    private final ProductRepository productRepository;
+
+    @Autowired
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     public Optional<Product> getProduct(String id) {
-        Optional<Product> optionalProduct = productList.stream()
-                .filter(product -> product.getId() == id)
-                .findFirst();
-
-        if (optionalProduct.isPresent()) {
-            return optionalProduct;
-        } else {
-            throw new ProductNotFoundException("Product not found with ID: " + id);
-        }
+        return productRepository.findById(id);
     }
-    
+
     public List<Product> getAllProducts() {
-    	return productList;
+        return productRepository.findAll();
     }
 
     public void addProduct(Product newProduct) throws ProductAlreadyExistsException {
-        boolean productExists = productList.stream()
-                .anyMatch(product -> product.getId() == newProduct.getId());
+        Optional<Product> existingProduct = productRepository.findById(newProduct.getId());
 
-        if (productExists) {
+        if (existingProduct.isPresent()) {
             throw new ProductAlreadyExistsException("Product already exists with ID: " + newProduct.getId());
         } else {
-            productList.add(newProduct);
+            productRepository.save(newProduct);
         }
     }
 
     public void deleteProduct(String id) {
-        Optional<Product> productToRemove = productList.stream()
-                .filter(product -> product.getId() == id)
-                .findFirst();
+        Optional<Product> existingProduct = productRepository.findById(id);
 
-        if (productToRemove.isPresent()) {
-            Product removedProduct = productToRemove.get();
-            boolean removed = productList.removeIf(product -> product.getId() == id);
-            if (removed) {
-                System.out.println("Product named : " + removedProduct.getName() + " has been deleted");
-            } else {
-                throw new ProductNotFoundException("Error occurred while deleting product with ID: " + id);
-            }
+        if (existingProduct.isPresent()) {
+            productRepository.deleteById(id);
+            System.out.println("Product with ID: " + id + " has been deleted");
         } else {
             throw new ProductNotFoundException("Product not found with ID: " + id);
         }
     }
 
     public void updateProduct(String id, Product updatedProduct) {
-        boolean found = false;
-        for (int i = 0; i < productList.size(); i++) {
-            Product product = productList.get(i);
-            if (product.getId() == id) {
-                productList.set(i, updatedProduct);
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
+        Optional<Product> existingProduct = productRepository.findById(id);
+
+        if (existingProduct.isPresent()) {
+            productRepository.save(updatedProduct);
+        } else {
             throw new ProductNotFoundException("Product not found with ID: " + id);
         }
     }
