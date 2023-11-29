@@ -26,9 +26,9 @@ public class ProductController {
     }
 
 	@GetMapping("/product")
-	public ResponseEntity<Product> getProduct(@RequestParam String id) {
+	public ResponseEntity<Product> getProduct(@RequestParam String id, @RequestParam String userId) {
 		try {
-			Product product = productService.getProduct(id)
+			Product product = productService.getProduct(id, userId)
 					.orElseThrow(() -> new ProductNotFoundException("Product not found with ID: " + id));
 			return new ResponseEntity<>(product, HttpStatus.OK);
 		} catch (ProductNotFoundException e) {
@@ -37,19 +37,19 @@ public class ProductController {
 	}
 
 	@GetMapping("/all-products")
-	public List<Product> getAllProducts() {
-		return productService.getAllProducts();
+	public List<Product> getAllProducts(@RequestParam String userId) {
+		return productService.getAllProducts(userId);
 	}
 
 	@PostMapping("/add-product")
-	public ResponseEntity<String> addProduct(@RequestBody Product newProduct) {
+	public ResponseEntity<String> addProduct(@RequestBody Product newProduct, @RequestParam String userId) {
 		try {
 
 			if (newProduct.getId() == null) {
 				newProduct.setId(UUID.randomUUID().toString());
 			}
 			// Validate the product using your service if needed
-			productService.addProduct(newProduct);
+			productService.addProduct(newProduct, userId);
 			
 
 			// Save the product to the MongoDB repository
@@ -62,9 +62,9 @@ public class ProductController {
 	}
 
 	@DeleteMapping("/delete-product/{id}")
-	public ResponseEntity<String> deleteProduct(@PathVariable String id) {
+	public ResponseEntity<String> deleteProduct(@PathVariable String id, @RequestParam String userId) {
 		try {
-			productService.deleteProduct(id);
+			productService.deleteProduct(userId, id);
 			return new ResponseEntity<>("Product deleted successfully", HttpStatus.OK);
 		} catch (ProductNotFoundException e) {
 			return new ResponseEntity<>("Product not found", HttpStatus.NOT_FOUND);
@@ -72,9 +72,9 @@ public class ProductController {
 	}
 
 	@PutMapping("/update-product/{id}")
-	public ResponseEntity<String> updateProduct(@PathVariable String id, @RequestBody Product updatedProduct) {
+	public ResponseEntity<String> updateProduct(@PathVariable String id, @RequestBody Product updatedProduct, @RequestParam String userId) {
 		try {
-			productService.updateProduct(id, updatedProduct);
+			productService.updateProduct(id, updatedProduct, userId);
 			return new ResponseEntity<>("Product updated successfully", HttpStatus.OK);
 		} catch (ProductNotFoundException e) {
 			return new ResponseEntity<>("Product not found", HttpStatus.NOT_FOUND);

@@ -6,12 +6,13 @@
         </Console>
         <File name="File" fileName="logs/application.log">
             <PatternLayout>
-                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Pattern>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} | %msg%n</Pattern>
             </PatternLayout>
         </File>
     </Appenders>
     <Loggers>
-        <Root level="info">
+		<Logger name="com.example.demo.service.ProductService" level="info"/>
+        <Root level="warn">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="File"/>
         </Root>

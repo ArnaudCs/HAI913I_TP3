@@ -3,10 +3,12 @@ package com.example.client;
 import com.example.demo.api.model.Product;
 import com.example.demo.api.model.User;
 
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -14,42 +16,46 @@ import java.util.Scanner;
 
 public class CLI {
 
-	private static final String BASE_URL = "http://localhost:8080"; // Replace with your actual base URL
+	private static final String BASE_URL = "http://localhost:8080"; // Remplacez par votre URL de base réelle
+	private static String selectedUserId;
 
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
 
+		// Sélection de l'utilisateur au démarrage
+		selectUser(scanner);
+
 		while (true) {
-			System.out.println("1. Get User");
-			System.out.println("2. Get Product");
-			System.out.println("3. Add Product");
-			System.out.println("4. Delete Product");
-			System.out.println("5. Update Product");
-			System.out.println("6. List All Products");
+			System.out.println("1. Get Product");
+			System.out.println("2. Add Product");
+			System.out.println("3. Delete Product");
+			System.out.println("4. Update Product");
+			System.out.println("5. List All Products");
+			System.out.println("6. Get raw logs");
 			System.out.println("0. Exit");
 			System.out.print("Enter your choice: ");
 
 			int choice = scanner.nextInt();
-			scanner.nextLine(); // Consume the newline
+			scanner.nextLine(); // Consommer la nouvelle ligne
 
 			switch (choice) {
 			case 1:
-				listAllUsers();
-				break;
-			case 2:
 				getProduct();
 				break;
-			case 3:
+			case 2:
 				addProduct();
 				break;
-			case 4:
+			case 3:
 				deleteProduct();
 				break;
-			case 5:
+			case 4:
 				updateProduct();
 				break;
-			case 6:
+			case 5:
 				listAllProducts();
+				break;
+			case 6:
+				getAllLogs();
 				break;
 			case 0:
 				System.out.println("Exiting...");
@@ -60,7 +66,39 @@ public class CLI {
 				break;
 			}
 		}
+	}
 
+	private static void selectUser(Scanner scanner) {
+		RestTemplate restTemplate = new RestTemplate();
+		User[] users = restTemplate.getForObject(BASE_URL + "/all-users", User[].class);
+
+		if (users != null && users.length > 0) {
+			System.out.println("Select a user:");
+
+			// Afficher une liste numérotée des utilisateurs
+			for (int i = 0; i < users.length; i++) {
+				System.out.println((i + 1) + ". " + users[i]);
+			}
+
+			// Demander un entier correspondant à l'utilisateur
+			System.out.print("Enter user number: ");
+			int userNumber = scanner.nextInt();
+			scanner.nextLine(); // Consommer la nouvelle ligne
+
+			// Assurer que le numéro d'utilisateur est dans une plage valide
+			if (userNumber > 0 && userNumber <= users.length) {
+				// Récupérer l'utilisateur sélectionné
+				User selectedUser = users[userNumber - 1];
+				selectedUserId = selectedUser.getId();
+				System.out.println("Selected user details: " + selectedUser);
+			} else {
+				System.out.println("Invalid user number. Exiting...");
+				System.exit(0);
+			}
+		} else {
+			System.out.println("No users found. Exiting...");
+			System.exit(0);
+		}
 	}
 
 	private static void listAllUsers() {
@@ -92,7 +130,7 @@ public class CLI {
 		} else {
 			System.out.println("No users found.");
 		}
-		
+
 	}
 
 	private static void getProduct() {
@@ -101,17 +139,19 @@ public class CLI {
 		String productId = scanner.nextLine();
 
 		RestTemplate restTemplate = new RestTemplate();
-		Product product = restTemplate.getForObject(BASE_URL + "/product?id=" + productId, Product.class);
+		Product product = restTemplate.getForObject(BASE_URL + "/product?id=" + productId + "&userId=" + selectedUserId,
+				Product.class);
 
 		if (product != null) {
 			System.out.println("Product details: " + product);
 		} else {
 			System.out.println("Product not found.");
 		}
-		
 	}
 
 	private static void addProduct() {
+		// Utilisez selectedUserId pour inclure l'identifiant de l'utilisateur dans la
+		// requête
 		Scanner scanner = new Scanner(System.in);
 		System.out.print("Enter product name: ");
 		String productName = scanner.nextLine();
@@ -123,10 +163,9 @@ public class CLI {
 		newProduct.setName(productName);
 		newProduct.setPrice(productPrice);
 
-		ResponseEntity<String> response = restTemplate.postForEntity(BASE_URL + "/add-product", newProduct,
-				String.class);
+		ResponseEntity<String> response = restTemplate.postForEntity(BASE_URL + "/add-product?userId=" + selectedUserId,
+				newProduct, String.class);
 		System.out.println(response.getBody());
-		
 	}
 
 	private static void deleteProduct() {
@@ -135,11 +174,12 @@ public class CLI {
 		String productId = scanner.nextLine();
 
 		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<String> response = restTemplate.exchange(BASE_URL + "/delete-product/{id}",
-				org.springframework.http.HttpMethod.DELETE, null, String.class, productId);
+		// Utilisez selectedUserId comme paramètre dans l'URL
+		ResponseEntity<String> response = restTemplate.exchange(
+				BASE_URL + "/delete-product/{id}?userId=" + selectedUserId, org.springframework.http.HttpMethod.DELETE,
+				null, String.class, productId);
 
 		System.out.println(response.getBody());
-		
 	}
 
 	private static void updateProduct() {
@@ -174,21 +214,23 @@ public class CLI {
 
 			RestTemplate restTemplate = new RestTemplate();
 
-			// Use the selectedProduct as the request body
-			ResponseEntity<String> response = restTemplate.exchange(BASE_URL + "/update-product/{id}",
-					org.springframework.http.HttpMethod.PUT, new HttpEntity<>(selectedProduct), // Set the request body
+			// Utilisez selectedUserId comme paramètre dans l'URL
+			ResponseEntity<String> response = restTemplate.exchange(
+					BASE_URL + "/update-product/{id}?userId=" + selectedUserId, org.springframework.http.HttpMethod.PUT,
+					new HttpEntity<>(selectedProduct), // Set the request body
 					String.class, selectedProduct.getId());
 
 			System.out.println(response.getBody());
 		} else {
 			System.out.println("Invalid selection.");
 		}
-		
 	}
 
 	private static void listAllProducts() {
 		RestTemplate restTemplate = new RestTemplate();
-		Product[] products = restTemplate.getForObject(BASE_URL + "/all-products", Product[].class);
+		// Utilisez selectedUserId comme paramètre dans l'URL
+		Product[] products = restTemplate.getForObject(BASE_URL + "/all-products?userId=" + selectedUserId,
+				Product[].class);
 
 		if (products != null && products.length > 0) {
 			System.out.println("All Products:");
@@ -200,8 +242,31 @@ public class CLI {
 
 	private static List<Product> getAllProducts() {
 		RestTemplate restTemplate = new RestTemplate();
-		Product[] products = restTemplate.getForObject(BASE_URL + "/all-products", Product[].class);
+		Product[] products = restTemplate.getForObject(BASE_URL + "/all-products?userId=" + selectedUserId,
+				Product[].class);
 
 		return (products != null) ? Arrays.asList(products) : Collections.emptyList();
+	}
+
+	private static void getAllLogs() {
+		RestTemplate restTemplate = new RestTemplate();
+
+		ResponseEntity<Resource> response = restTemplate.getForEntity(BASE_URL + "/api/logs/all", Resource.class);
+
+		if (response.getStatusCode().is2xxSuccessful()) {
+			try {
+				// Lire le contenu du fichier de log depuis le Resource
+				byte[] contentBytes = new byte[response.getBody().getInputStream().available()];
+				response.getBody().getInputStream().read(contentBytes);
+
+				// Convertir le contenu en chaîne et l'afficher
+				String content = new String(contentBytes);
+				System.out.println(content);
+			} catch (IOException e) {
+				System.err.println("Error reading log content: " + e.getMessage());
+			}
+		} else {
+			System.out.println("Failed to retrieve logs. Status code: " + response.getStatusCodeValue());
+		}
 	}
 }

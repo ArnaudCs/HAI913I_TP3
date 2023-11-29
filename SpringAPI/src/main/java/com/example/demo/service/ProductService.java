@@ -24,43 +24,44 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public Optional<Product> getProduct(String id) {
-    	logger.info("User requested product with ID: {}", id);
+    public Optional<Product> getProduct(String id, String userId) {
+    	logger.info("{} | READ | PRODUCT | {}", userId, id);
         return productRepository.findById(id);
     }
 
-    public List<Product> getAllProducts() {
+    public List<Product> getAllProducts(String userId) {
+    	logger.info("{} | READ | ALL PRODUCTS", userId);
         return productRepository.findAll();
     }
 
-    public void addProduct(Product newProduct) throws ProductAlreadyExistsException {
+    public void addProduct(Product newProduct, String userId) throws ProductAlreadyExistsException {
         Optional<Product> existingProduct = productRepository.findById(newProduct.getId());
 
         if (existingProduct.isPresent()) {
             throw new ProductAlreadyExistsException("Product already exists with ID: " + newProduct.getId());
         } else {
-        	logger.info("User added a new product: {}", newProduct);
+        	logger.info("{} | WRITE | ADD | {}", userId, newProduct.getId());
             productRepository.save(newProduct);
         }
     }
 
-    public void deleteProduct(String id) {
+    public void deleteProduct(String userId, String id) {
         Optional<Product> existingProduct = productRepository.findById(id);
 
         if (existingProduct.isPresent()) {
             productRepository.deleteById(id);
             System.out.println("Product with ID: " + id + " has been deleted");
-            logger.info("User delete a product with id: {}", id);
+            logger.info("{} | WRITE | DELETE | {}", userId, id);
         } else {
             throw new ProductNotFoundException("Product not found with ID: " + id);
         }
     }
 
-    public void updateProduct(String id, Product updatedProduct) {
+    public void updateProduct(String id, Product updatedProduct, String userId) {
         Optional<Product> existingProduct = productRepository.findById(id);
 
         if (existingProduct.isPresent()) {
-        	logger.info("User update a new product: {}", updatedProduct);
+        	logger.info("{} | WRITE | UPDATE | {}", userId, id);
             productRepository.save(updatedProduct);
         } else {
             throw new ProductNotFoundException("Product not found with ID: " + id);
