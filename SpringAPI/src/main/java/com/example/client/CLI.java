@@ -32,6 +32,9 @@ public class CLI {
 			System.out.println("4. Update Product");
 			System.out.println("5. List All Products");
 			System.out.println("6. Get raw logs");
+			System.out.println("7. Get user with more READ op");
+			System.out.println("8. Get user with more WRITE op");
+			System.out.println("9. Get user ranked by op number");
 			System.out.println("0. Exit");
 			System.out.print("Enter your choice: ");
 
@@ -55,7 +58,16 @@ public class CLI {
 				listAllProducts();
 				break;
 			case 6:
-				getAllLogs();
+				getLogs("all");
+				break;
+			case 7:
+				getLogs("read");
+				break;
+			case 8:
+				getLogs("write");
+				break;
+			case 9:
+				getLogs("ranked");
 				break;
 			case 0:
 				System.out.println("Exiting...");
@@ -248,10 +260,10 @@ public class CLI {
 		return (products != null) ? Arrays.asList(products) : Collections.emptyList();
 	}
 
-	private static void getAllLogs() {
+	private static void getLogs(String type) {
 		RestTemplate restTemplate = new RestTemplate();
 
-		ResponseEntity<Resource> response = restTemplate.getForEntity(BASE_URL + "/api/logs/all", Resource.class);
+		ResponseEntity<Resource> response = restTemplate.getForEntity(BASE_URL + "/api/logs/" + type, Resource.class);
 
 		if (response.getStatusCode().is2xxSuccessful()) {
 			try {

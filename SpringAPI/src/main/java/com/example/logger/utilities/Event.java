@@ -1,7 +1,11 @@
 package com.example.logger.utilities;
+
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Event {
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+
     private LocalDateTime timestamp;
     private String userId;
     private String type;
@@ -16,21 +20,15 @@ public class Event {
         this.action = action;
         this.productId = productId;
     }
-    
-    
 
     public Event(LocalDateTime timestamp, String userId, String type, String action) {
-		super();
-		this.timestamp = timestamp;
-		this.userId = userId;
-		this.type = type;
-		this.action = action;
-	}
+        this.timestamp = timestamp;
+        this.userId = userId;
+        this.type = type;
+        this.action = action;
+    }
 
-
-
-	// Getters et Setters
-
+    // Getters et Setters
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
@@ -74,9 +72,7 @@ public class Event {
     // Méthode pour afficher l'événement sous forme de chaîne
     @Override
     public String toString() {
-        return timestamp + " | " + userId + " | " + type + " | " + action +
-               (productId != null && !productId.isEmpty() ? " | " + productId : "");
+        return timestamp.format(DATE_TIME_FORMATTER) + " | " + userId + " | " + type + " | " + action +
+                (productId != null && !productId.isEmpty() ? " | " + productId : "");
     }
-
-
 }

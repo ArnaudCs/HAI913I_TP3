@@ -57,6 +57,12 @@ public class LogParser {
 
         return userProfiles;
     }
+    
+    public static void userProfilesExporter(List<UserProfile> userProfiles) {
+    	UserProfileExporter.exportReadPriority(userProfiles, "logs/read_priority.txt");
+		UserProfileExporter.exportWritePriority(userProfiles, "logs/write_priority.txt");
+		UserProfileExporter.exportRankedProfiles(userProfiles, "logs/ranked_profiles.txt");
+    }
 
     public static void main(String[] args) {
         // Example usage
