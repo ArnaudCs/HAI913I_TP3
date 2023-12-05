@@ -47,7 +47,7 @@ class MetricChartCard extends React.Component {
                     <TableHeaderCell className='text-center'>Write Operations</TableHeaderCell>
                     </TableRow>
                 </TableHead>
-                <TableBody className='text-white'>
+                <TableBody >
                     {data.map((item) => (
                         <TableRow key={item.userId}>
                         <TableCell className='text-center'>{item.index}</TableCell>

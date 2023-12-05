@@ -29,7 +29,7 @@ class TableStats extends React.Component {
               <TableHeaderCell>Entity Requested</TableHeaderCell>
             </TableRow>
           </TableHead>
-          <TableBody className='text-white'>
+          <TableBody >
             {data.map((item) => (
               item.timestamp ? ( // Check if timestamp is not empty
                 <TableRow key={item.timestamp}>
