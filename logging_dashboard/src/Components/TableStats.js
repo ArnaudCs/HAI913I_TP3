@@ -14,11 +14,12 @@ import {
 
 class TableStats extends React.Component {
 
-
   render() {
     const { data } = this.props;
+    const reversedData = [...data].reverse(); // Create a copy of the array and reverse it
+
     return (
-      <Card >
+      <Card>
         <Title>All registered logs</Title>
         <Table className="mt-5">
           <TableHead>
@@ -29,8 +30,8 @@ class TableStats extends React.Component {
               <TableHeaderCell>Entity Requested</TableHeaderCell>
             </TableRow>
           </TableHead>
-          <TableBody >
-            {data.map((item) => (
+          <TableBody>
+            {reversedData.map((item) => (
               item.timestamp ? ( // Check if timestamp is not empty
                 <TableRow key={item.timestamp}>
                   <TableCell>{item.timestamp}</TableCell>
